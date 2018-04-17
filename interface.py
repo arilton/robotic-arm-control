@@ -3,9 +3,15 @@
 import sys
 from PySide.QtGui import *
 from PySide.QtCore import *
+import serial
 
-
+serial_port_name = '/dev/ttyS0'
 qt_app = QApplication(sys.argv)
+
+
+def graus_para_us(graus):
+    return graus * 100./9
+
 
 class InterfaceRobotica(QWidget):
 
@@ -14,7 +20,7 @@ class InterfaceRobotica(QWidget):
         self.setMinimumWidth(300)
         self.setMinimumHeight(640)
 
-    def set_valor(self, motor, incremento = True):
+    def set_valor(self, motor, incremento=True):
         valor = int(motor['valor'].value())
         if incremento:
             valor += 10
@@ -23,6 +29,7 @@ class InterfaceRobotica(QWidget):
             valor -= 10
             valor = motor['min_range'] if valor < motor['min_range'] else valor
         motor['valor'].setValue(valor)
+        self.serial_port.write('#'+motor['canal']+'P'+str(valor))
 
     def base_incremento(self):
         self.set_valor(self.motores['base'])
@@ -112,6 +119,8 @@ class InterfaceRobotica(QWidget):
         self.layout_lateral_esquerda = QVBoxLayout()
         self.layout_central = QGridLayout()
 
+        self.serial_port = serial.Serial(serial_port_name)
+
         # Definição dos motores
         self.motores = {
             'base': {
@@ -123,6 +132,7 @@ class InterfaceRobotica(QWidget):
                 'slider': QSlider(Qt.Horizontal),
                 'min_range': 45,
                 'max_range': 207,
+                'canal': '0',
             },
             'ombro': {
                 'box': QGroupBox('Motor da Ombro'),
@@ -133,6 +143,7 @@ class InterfaceRobotica(QWidget):
                 'slider': QSlider(Qt.Horizontal),
                 'min_range': 108,
                 'max_range': 180,
+                'canal': '1',
             },
             'cotovelo': {
                 'box': QGroupBox('Motor da Cotovelo'),
@@ -143,6 +154,7 @@ class InterfaceRobotica(QWidget):
                 'slider': QSlider(Qt.Horizontal),
                 'min_range': 99,
                 'max_range': 189,
+                'canal': '2',
             },
             'punho': {
                 'box': QGroupBox('Motor da Punho'),
@@ -153,6 +165,7 @@ class InterfaceRobotica(QWidget):
                 'slider': QSlider(Qt.Horizontal),
                 'min_range': 45,
                 'max_range': 225,
+                'canal': '3',
             },
             'garra': {
                 'box': QGroupBox('Motor da Garra'),
@@ -163,6 +176,7 @@ class InterfaceRobotica(QWidget):
                 'slider': QSlider(Qt.Horizontal),
                 'min_range': 117,
                 'max_range': 216,
+                'canal': '4',
             },
         }
 
