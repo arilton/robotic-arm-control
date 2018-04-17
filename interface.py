@@ -14,56 +14,45 @@ class InterfaceRobotica(QWidget):
         self.setMinimumWidth(300)
         self.setMinimumHeight(640)
 
+    def set_valor(self, motor, incremento = True):
+        valor = int(motor['valor'].value())
+        if incremento:
+            valor += 10
+            valor = motor['max_range'] if valor > motor['max_range'] else valor
+        else:
+            valor -= 10
+            valor = motor['min_range'] if valor < motor['min_range'] else valor
+        motor['valor'].setValue(valor)
+
     def base_incremento(self):
-        valor = int(self.motores['base']['valor'].value()) + 10
-        valor = 360 if valor > 360 else valor 
-        self.motores['base']['valor'].setValue(valor)
+        self.set_valor(self.motores['base'])
 
     def base_decremento(self):
-        valor = int(self.motores['base']['valor'].value()) - 10
-        valor = 0 if valor < 0 else valor
-        self.motores['base']['valor'].setValue(valor)
+        self.set_valor(self.motores['base'], False)
 
     def ombro_incremento(self):
-        valor = int(self.motores['ombro']['valor'].value()) + 10
-        valor = 360 if valor > 360 else valor
-        self.motores['ombro']['valor'].setValue(valor)
+        self.set_valor(self.motores['ombro'])
 
     def ombro_decremento(self):
-        valor = int(self.motores['ombro']['valor'].value()) - 10
-        valor = 0 if valor < 0 else valor
-        self.motores['ombro']['valor'].setValue(valor)
+        self.set_valor(self.motores['ombro'], False)
 
     def cotovelo_incremento(self):
-        valor = int(self.motores['cotovelo']['valor'].value()) + 10
-        valor = 360 if valor > 360 else valor
-        self.motores['cotovelo']['valor'].setValue(valor)
+        self.set_valor(self.motores['cotovelo'])
 
     def cotovelo_decremento(self):
-        valor = int(self.motores['cotovelo']['valor'].value()) - 10
-        valor = 0 if valor < 0 else valor
-        self.motores['cotovelo']['valor'].setValue(valor)
+        self.set_valor(self.motores['cotovelo'], False)
 
     def punho_incremento(self):
-        valor = int(self.motores['punho']['valor'].value()) + 10
-        valor = 360 if valor > 360 else valor
-        self.motores['punho']['valor'].setValue(valor)
+        self.set_valor(self.motores['punho'])
 
     def punho_decremento(self):
-        valor = int(self.motores['punho']['valor'].value()) - 10
-        valor = 0 if valor < 0 else valor
-        self.motores['punho']['valor'].setValue(valor)
+        self.set_valor(self.motores['punho'], False)
 
     def garra_incremento(self):
-        valor = int(self.motores['garra']['valor'].value()) + 10
-        valor = 360 if valor > 360 else valor
-        self.motores['garra']['valor'].setValue(valor)
+        self.set_valor(self.motores['garra'])
 
     def garra_decremento(self):
-        valor = int(self.motores['garra']['valor'].value()) - 10
-        valor = 0 if valor < 0 else valor
-        self.motores['garra']['valor'].setValue(valor)
-    
+        self.set_valor(self.motores['garra'], False)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Q:
@@ -92,8 +81,8 @@ class InterfaceRobotica(QWidget):
 
             motor['valor'].valueChanged.connect(motor['dial'].setValue)
             motor['dial'].valueChanged.connect(motor['valor'].setValue)
-            motor['valor'].setRange(0, 360)
-            motor['dial'].setRange(0, 360)
+            motor['valor'].setRange(motor['min_range'], motor['max_range'])
+            motor['dial'].setRange(motor['min_range'], motor['max_range'])
             motor['incremento'].clicked.connect(eval('self.' + nome_motor + '_incremento'))
             motor['decremento'].clicked.connect(eval('self.' + nome_motor + '_decremento'))
 
@@ -131,7 +120,9 @@ class InterfaceRobotica(QWidget):
                 'incremento': QPushButton('Incremento (Q)'),
                 'decremento': QPushButton('Decremento (W)'),
                 'valor': QSpinBox(),
-                'slider': QSlider(Qt.Horizontal)
+                'slider': QSlider(Qt.Horizontal),
+                'min_range': 45,
+                'max_range': 207,
             },
             'ombro': {
                 'box': QGroupBox('Motor da Ombro'),
@@ -139,7 +130,9 @@ class InterfaceRobotica(QWidget):
                 'incremento': QPushButton('Incremento (A)'),
                 'decremento': QPushButton('Decremento (S)'),
                 'valor': QSpinBox(),
-                'slider': QSlider(Qt.Horizontal)
+                'slider': QSlider(Qt.Horizontal),
+                'min_range': 108,
+                'max_range': 180,
             },
             'cotovelo': {
                 'box': QGroupBox('Motor da Cotovelo'),
@@ -147,7 +140,9 @@ class InterfaceRobotica(QWidget):
                 'incremento': QPushButton('Incremento (Z)'),
                 'decremento': QPushButton('Decremento (X)'),
                 'valor': QSpinBox(),
-                'slider': QSlider(Qt.Horizontal)
+                'slider': QSlider(Qt.Horizontal),
+                'min_range': 99,
+                'max_range': 189,
             },
             'punho': {
                 'box': QGroupBox('Motor da Punho'),
@@ -155,7 +150,9 @@ class InterfaceRobotica(QWidget):
                 'incremento': QPushButton('Incremento (R)'),
                 'decremento': QPushButton('Decremento (T)'),
                 'valor': QSpinBox(),
-                'slider': QSlider(Qt.Horizontal)
+                'slider': QSlider(Qt.Horizontal),
+                'min_range': 45,
+                'max_range': 225,
             },
             'garra': {
                 'box': QGroupBox('Motor da Garra'),
@@ -163,7 +160,9 @@ class InterfaceRobotica(QWidget):
                 'incremento': QPushButton('Incremento (F)'),
                 'decremento': QPushButton('Decremento (G)'),
                 'valor': QSpinBox(),
-                'slider': QSlider(Qt.Horizontal)
+                'slider': QSlider(Qt.Horizontal),
+                'min_range': 117,
+                'max_range': 216,
             },
         }
 
